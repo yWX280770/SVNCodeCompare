@@ -1,10 +1,16 @@
 package com.chinasoft.parse;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +29,11 @@ public class PathsUtil
 {
 
 	
+	/**
+	 * 解析IO下载下来的文件DOM
+	 * @param doc
+	 * @return
+	 */
 	private static List<LogEntry> parse(Document doc)
 	{
 		NodeList nl = doc.getElementsByTagName("logentry");   
@@ -47,6 +58,12 @@ public class PathsUtil
 		return entryList;
 	}
 
+	/**
+	 * 解析每一个实体形成logEntry对象
+	 * @param log
+	 * @param doc
+	 * @param i
+	 */
 	private static void parseLog(LogEntry log, Document doc, int i)
 	{
 		String t = doc.getElementsByTagName("logentry").item(i).getAttributes().getNamedItem("revision").getTextContent().trim();
@@ -68,6 +85,11 @@ public class PathsUtil
 		parseMsgText(msg, t2);
 	}
 	
+	/**
+	 * 解析svn上的msg部分
+	 * @param msg
+	 * @param t2
+	 */
 	private static void parseMsgText(MsgText msg,String t2 )
 	{
 		/**
@@ -102,6 +124,12 @@ public class PathsUtil
 		
 	}
 	
+	/**
+	 * 解析其中文件路径部分，Path
+	 * @param log
+	 * @param namedNodeMap
+	 * @param trim2
+	 */
 	private static void parsePath(LogEntry log,NamedNodeMap namedNodeMap, String trim2) 
 	{
 		List<FilePath> list = null;
@@ -124,6 +152,15 @@ public class PathsUtil
 		
 	}
 	
+	/**
+	 * 通过IO流获取svn上所有的记录
+	 * 
+	 * @param input
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
 	public static  List<LogEntry> readInputStream(InputStream input) throws SAXException, IOException, ParserConfigurationException
 	{
 		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();   
@@ -133,6 +170,14 @@ public class PathsUtil
 		
 	}
 	
+	/**
+	 * 通过xml获取svn上所有的记录
+	 * @param file
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	public static List<LogEntry> readXml(File file) throws ParserConfigurationException, SAXException, IOException
 	{
 		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();   
@@ -140,5 +185,33 @@ public class PathsUtil
 		Document doc = builder.parse(file); 
 		return parse(doc);
 		
+	}
+	
+	/**
+	 * 读取本地conf下面的comm配置文件，其中包含了带过滤的svn记录
+	 * @return
+	 */
+	public static Set<String> readProps()
+	{
+		try
+		{
+			Properties props = new Properties();
+			FileInputStream input = new FileInputStream(new File("conf/comm.properties"));
+			props.load(input);
+			String t = props.getProperty("userName");
+			Set<String> set = new HashSet<String>();
+			set.addAll(Arrays.asList(t.toLowerCase().split(",")));
+			return set;
+		}
+		catch(FileNotFoundException e)
+		{
+			
+		}
+		catch(IOException e)
+		{
+			
+		}
+		return null;
+	
 	}
 }

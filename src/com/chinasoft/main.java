@@ -1,15 +1,9 @@
 package com.chinasoft;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -43,7 +37,11 @@ public class main
 			Process process = Runtime.getRuntime().exec(Const.SVN_LOG_XML);
 			InputStream reader = process.getInputStream();
 			List<LogEntry> list = PathsUtil.readInputStream(reader);
-			SelectModel.select(list);
+			
+			Set<String> set = PathsUtil.readProps();	
+			
+			
+			SelectModel.select(list, set);
 			
 			long end = System.currentTimeMillis();
 			System.out.println(end-start);

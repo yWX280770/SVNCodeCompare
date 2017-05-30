@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.chinasoft.model.FilePath;
 import com.chinasoft.model.LogEntry;
@@ -16,30 +17,45 @@ import com.chinasoft.props.Const;
 public class SelectModel 
 {
 
-	public static void select(List<LogEntry> list) 
+	/**
+	 * 筛选并导出文件到本地对应目录
+	 * @param list
+	 * @param set
+	 */
+	public static void select(List<LogEntry> list,Set<String> set) 
 	{
+		if (null == set || 0 >= set.size())
+		{
+			return;
+		}
 		String dir = null;
 		
 		Map<String, ArrayList<ArrayList<String>>> map = new HashMap<String, ArrayList<ArrayList<String>>>();
 		ArrayList<ArrayList<String>> filePath = null;
 		for (LogEntry log : list)
 		{
-			dir = createDir(log);
-			if (null == map.get(dir))
+			if (!jude(log,set))
 			{
-				filePath = new ArrayList<ArrayList<String>>();
-				map.put(dir, filePath);
-			}
-			else
-			{
-				filePath = map.get(dir);
+				continue;
 			}
 			
-			ArrayList<ArrayList<String>> tmp = getTotalPath(log, dir);
-			if(2 == tmp.size())
-			{
-				merge(filePath,tmp);
-			}
+			dir = createDir(log);
+//			if (null == map.get(dir))
+//			{
+//				filePath = new ArrayList<ArrayList<String>>();
+//				map.put(dir, filePath);
+//			}
+//			else
+//			{
+//				filePath = map.get(dir);
+//			}
+			
+			filePath = getTotalPath(log, dir);
+			map.put(dir, filePath);
+//			if(2 == tmp.size())
+//			{
+//				merge(filePath,tmp);
+//			}
 			
 		}
 		
@@ -48,6 +64,31 @@ public class SelectModel
 		
 	}
 	
+	/**
+	 * 判断是否下载当前svn的记录到本地
+	 * @param log
+	 * @param set
+	 * @return
+	 */
+	private static boolean jude(LogEntry log, Set<String> set) 
+	{
+	
+		String modif = log.getMsg().getModifyName().toLowerCase();
+		for(String tmp : set)
+		{
+			if(modif.matches(tmp))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	/**
+	 * 下载新旧文件到本地
+	 * @param map
+	 */
 	private static void downLoad(Map<String, ArrayList<ArrayList<String>>> map )
 	{
 		Runtime run = Runtime.getRuntime();
@@ -73,26 +114,36 @@ public class SelectModel
 		
 	}
 	
-	private static void merge(ArrayList<ArrayList<String>> filePath, ArrayList<ArrayList<String>> tmp) 
-	{
-		
-		if( 0 == filePath.size())
-		{
-			filePath.addAll(tmp);
-			return;
-		}
-		
-		if (0 < filePath.size() && filePath.size() == tmp.size())
-		{
-			for(int i=0;i<filePath.size();i++)
-			{
-				filePath.get(i).addAll(tmp.get(i));
-			}
-		}
-		
-		return;
-	}
+	/**
+	 * 如果基础目录一样将待下载文件集合并
+	 * @param filePath
+	 * @param tmp
+	 */
+//	private static void merge(ArrayList<ArrayList<String>> filePath, ArrayList<ArrayList<String>> tmp) 
+//	{
+//		
+//		if( 0 == filePath.size())
+//		{
+//			filePath.addAll(tmp);
+//			return;
+//		}
+//		
+//		if (0 < filePath.size() && filePath.size() == tmp.size())
+//		{
+//			for(int i=0;i<filePath.size();i++)
+//			{
+//				filePath.get(i).addAll(tmp.get(i));
+//			}
+//		}
+//		
+//		return;
+//	}
 
+	/**
+	 * 创建待下载文件的根目录，并创建本地文件
+	 * @param log
+	 * @return
+	 */
 	private static String createDir(LogEntry log)
 	{
 		
@@ -106,15 +157,30 @@ public class SelectModel
 		.append(log.getMsg().getDts());
 		String dir =  buf.toString();
 		
+		int col = dir.length();
 		File file = new File(buf.append(Const.COL).append(Const.NEW).toString());
-		file.mkdirs();
+		if(!file.exists())
+		{
+			file.mkdirs();
+		}
 		
-		file = new File(dir+Const.COL+Const.OLD);
-		file.mkdirs();
+		buf.setLength(col);
+		file = new File(buf.append(Const.COL).append(Const.OLD).toString());
+		if(!file.exists())
+		{
+			file.mkdirs();
+		}
 		
 		return dir;
 	}
 	
+	
+	/**
+	 * 获取每一个文件的完整svn记录
+	 * @param log
+	 * @param dir
+	 * @return
+	 */
 	private static ArrayList<ArrayList<String>> getTotalPath(LogEntry log, String dir)
 	{
 		StringBuffer buf = new StringBuffer();
