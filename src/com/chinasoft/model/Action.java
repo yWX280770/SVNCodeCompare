@@ -13,7 +13,7 @@ public enum Action
 	D(2),
 	
 	//δ֪
-	UNKNOWN(-1);
+	UNKNOWN(100);
 	
 	int value = -1;
 	
@@ -22,4 +22,16 @@ public enum Action
 		this.value = i;
 	}
 
+	public static Action parseAction(String act) 
+	{
+		switch(act)
+		{
+			case "M":
+				return M;
+			case "A":
+				return A;
+			default:
+				return UNKNOWN;
+		}
+	}
 }

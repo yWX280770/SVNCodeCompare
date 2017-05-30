@@ -39,12 +39,14 @@ public class main
 //
 //			File f=new File("F:\\python\\python\\msg.txt");   
 //			List<LogEntry> list = PathsUtil.readXml(f);
-			
+			long start = System.currentTimeMillis();
 			Process process = Runtime.getRuntime().exec(Const.SVN_LOG_XML);
 			InputStream reader = process.getInputStream();
 			List<LogEntry> list = PathsUtil.readInputStream(reader);
 			SelectModel.select(list);
 			
+			long end = System.currentTimeMillis();
+			System.out.println(end-start);
 			
 		}
 		catch(IOException e)

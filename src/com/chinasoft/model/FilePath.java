@@ -22,12 +22,12 @@ public class FilePath
 	
 	public void setKind(String kind)
 	{
-		this.kind = Kind.valueOf(kind);
+		this.kind = Kind.parseKind(kind);
 	}
 	
 	public void setAct(String act)
 	{
-		this.act = Action.valueOf(act);
+		this.act = Action.parseAction(act);
 	}
 
 

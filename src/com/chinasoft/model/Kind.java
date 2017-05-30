@@ -9,12 +9,27 @@ public enum Kind
 	FILE(1),
 	
 	//δ֪
-	UNKNOWN(-1);
+	UNKNOWN(100);
 	
 	Kind(int i)
 	{
 		this.value = i;
 	}
+	
 	int value = Integer.MIN_VALUE;
+	
+	public static Kind parseKind(String kind)
+	{
+		switch (kind)
+		{
+		case "dir":
+			return DIR;
+		case "file":
+			return FILE;
+		default:
+			return UNKNOWN;
+			
+		}
+	}
 	
 }
