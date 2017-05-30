@@ -1,0 +1,12 @@
+package com.chinasoft;
+
+public class Model 
+{
+
+	
+	private String dts;
+	
+	private String commitName;
+	
+	private Head head;
+}

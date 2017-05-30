@@ -1,0 +1,27 @@
+package com.chinasoft.model;
+
+public enum Action 
+{
+
+	//修改
+	M,
+	
+	//新增
+	A,
+	
+	//未知
+	UNKNOWN;
+
+	public static Action parseAction(String act) 
+	{
+		switch(act)
+		{
+			case "M":
+				return M;
+			case "A":
+				return A;
+			default:
+				return UNKNOWN;
+		}
+	}
+}

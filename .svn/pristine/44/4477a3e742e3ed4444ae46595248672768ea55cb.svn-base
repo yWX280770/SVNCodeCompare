@@ -1,0 +1,42 @@
+package com.chinasoft;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class Parse 
+{
+	/**
+	 * 问题单号：DTS123456789
+	 * 特性名称：XXX
+	 * 问题影响版本：UXBXX
+	 * 问题修复版本：UXBXX
+	 * 修改人：XXX
+	 * 代码检视人：XXX，XXX
+	 * @throws IOException 
+	 * 
+	 */
+	public static void main(String[] args)
+	{
+		try
+		{
+//			String str = "svn log  https://WIN-77VNF1KA5PJ/svn/Python/trunk/";
+			String str = "svn cat -r 3 https://WIN-77VNF1KA5PJ/svn/Python/trunk/src/com/chinasoft/Test.java";
+			Process process = Runtime.getRuntime().exec(str);
+			InputStream reader = process.getInputStream();
+			byte[] byte1 = new byte[1024];
+			while (-1 != reader.read(byte1)) 
+			{
+				System.out.println(new String(byte1));
+				break;
+			}
+		}
+		catch(IOException e)
+		{
+			
+		}
+		finally
+		{
+			
+		}
+	}
+}

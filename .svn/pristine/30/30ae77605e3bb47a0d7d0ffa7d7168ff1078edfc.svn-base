@@ -1,0 +1,8 @@
+package com.chinasoft.select;
+
+import java.util.List;
+
+public class SelectModel 
+{
+
+}

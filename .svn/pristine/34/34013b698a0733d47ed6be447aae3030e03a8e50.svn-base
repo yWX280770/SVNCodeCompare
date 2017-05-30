@@ -1,0 +1,118 @@
+package com.chinasoft;
+
+
+public class Head 
+{
+
+	//svn编号
+	private String svnNum;
+	
+	//svn编号 不带R
+	private int svnNo;
+	
+	//cmo
+	private String cmoName;
+	
+	//提交时间
+	private String timestamp;
+	
+	// 修改文件数
+	private int col;
+
+/**
+	public static void main(String[] args) {
+		String a = "r7 | yanzhihao | 2017-05-29 13:59:13 +0800 (周一, 29 五月 2017) | 6 lines";
+		Head h = new Head();
+		h.parserHead(a);
+		System.out.println(h.toString());
+	}
+*/	
+	public void parserHead(String head)
+	{
+		String[] tmp = head.split(Const.SPLIT);
+		if (tmp.length == Const.NUM_4)
+		{
+			setSvnNum(tmp[0]);
+			cmoName = tmp[1];
+			timestamp = tmp[2];
+			setCol(tmp[3]);
+		}
+	}
+	
+	public final String getSvnNum()
+	{
+		return svnNum;
+	}
+
+	public final void setSvnNum(String svnNum)
+	{
+		//r7
+		String tmp = svnNum.trim().toLowerCase();
+		if (Const.NUM_1 < tmp.length() && tmp.charAt(0) == Const.CONST_R)
+		{
+			svnNo = Integer.parseInt(tmp.substring(Const.NUM_1));
+		}
+		this.svnNum = svnNum;
+	}
+
+	public final int getSvnNo()
+	{
+		return svnNo;
+	}
+
+	public final void setSvnNo(int svnNo)
+	{
+		this.svnNo = svnNo;
+	}
+
+	public final String getCmoName()
+	{
+		return cmoName;
+	}
+
+	public final void setCmoName(String cmoName)
+	{
+		this.cmoName = cmoName.trim();
+	}
+
+	public final String getTimestamp() {
+		return timestamp;
+	}
+
+	public final void setTimestamp(String timestamp)
+	{
+	}
+
+	public final int getCol()
+	{
+		return col;
+	}
+
+	public final void setCol(int col)
+	{
+		this.col = col;
+	}
+	
+	public final void setCol(String col)
+	{
+		// 2 lines
+		this.col =  Integer.parseInt(col.trim().split(Const.BLANK)[0].trim());;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append("svnNum:")
+		.append(svnNum)
+		.append("\tsvnNo:")
+		.append(svnNo)
+		.append("\tcmoName:")
+		.append(cmoName)
+		.append("\ttimestamp:")
+		.append(timestamp)
+		.append("\tcol:")
+		.append(col);
+		return buf.toString();
+	}
+}

@@ -1,0 +1,72 @@
+package com.chinasoft.model;
+
+
+/**
+ * <path prop-mods="false" text-mods="true" kind="file" action="M">/trunk/src/com/chinasoft/Const.java</path>
+ *
+ */
+public class FilePath 
+{
+	
+	private String path;
+	
+	private Kind kind = Kind.UNKNOWN;
+	
+	private Action act = Action.UNKNOWN;
+	
+	
+	public void setPath(String path)
+	{
+		this.path = path;
+	}
+	
+	public void setKind(String kind)
+	{
+		this.kind = Kind.valueOf(kind);
+	}
+	
+	public void setAct(String act)
+	{
+		this.act = Action.valueOf(act);
+	}
+
+
+	public final String getPath() {
+		return path;
+	}
+
+	public final Kind getKind() {
+		return kind;
+	}
+
+	public final Action getAct() {
+		return act;
+	}
+
+	public boolean isActionDel()
+	{
+		return act.value == Action.D.value;
+	}
+	
+	public boolean isActionAdd()
+	{
+		return act.value == Action.A.value;
+	}
+
+	public boolean isActionModify()
+	{
+		return act.value == Action.M.value;
+	}
+	
+
+	public boolean isFile() 
+	{
+		return  Kind.FILE.value == this.kind.value;
+	}
+	
+	public boolean isDir()
+	{
+		return Kind.DIR.value == this.kind.value;
+	}
+
+}

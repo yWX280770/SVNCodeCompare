@@ -1,0 +1,14 @@
+package com.chinasoft;
+
+import java.util.Scanner;
+
+public class Test 
+{
+
+	public static void main(String[] args) 
+	{
+		Scanner scanner = new Scanner(System.in);
+		System.err.println("第一次输出"+scanner.nextLine());
+		System.out.println("第二次输出"+"Hell,world.");
+	}
+}

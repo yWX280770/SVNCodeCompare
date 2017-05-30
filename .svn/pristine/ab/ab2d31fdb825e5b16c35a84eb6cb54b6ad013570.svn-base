@@ -1,0 +1,96 @@
+package com.chinasoft.parse;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.chinasoft.model.FilePath;
+import com.chinasoft.model.LogEntry;
+
+public class PathsUtil 
+{
+
+	
+	private static void parseLog(LogEntry log, Document doc, int i)
+	{
+		String t = doc.getElementsByTagName("logentry").item(i).getAttributes().getNamedItem("revision").getTextContent().trim();
+		String t1 = doc.getElementsByTagName("author").item(i).getTextContent().trim();
+		String t2 = doc.getElementsByTagName("msg").item(i).getTextContent().trim();
+		log.parseLog(t,t1,t2);
+	}
+
+	private static void parsePath(LogEntry log,NamedNodeMap namedNodeMap, String trim2) 
+	{
+		List<FilePath> list = null;
+		if (null == log.getPath())
+		{
+			list = new ArrayList<FilePath>();
+			log.setPath(list);
+		}
+		else
+		{
+			list = log.getPath();
+		}
+		
+		FilePath file = new FilePath();
+		file.setKind(namedNodeMap.getNamedItem("kind").getTextContent().trim());
+		file.setAct(namedNodeMap.getNamedItem("action").getTextContent().trim());
+		file.setPath(trim2);
+		list.add(file);
+		
+		
+	}
+	
+	public static List<LogEntry> readXml(File file) throws ParserConfigurationException, SAXException, IOException
+	{
+		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();   
+		DocumentBuilder builder=factory.newDocumentBuilder();   
+		Document doc = builder.parse(file); 
+		return parse(doc);
+		
+	}
+	
+	public static  List<LogEntry> readInputStream(InputStream input) throws SAXException, IOException, ParserConfigurationException
+	{
+		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();   
+		DocumentBuilder builder=factory.newDocumentBuilder();   
+		Document doc = builder.parse(input); 
+		return parse(doc);
+		
+	}
+	
+	private static List<LogEntry> parse(Document doc)
+	{
+		NodeList nl = doc.getElementsByTagName("logentry");   
+		LogEntry log = null;
+		List<LogEntry> entryList = new ArrayList<LogEntry>();
+		NodeList list = null;
+		for (int i=0;i < nl.getLength();i++)
+		{
+			log = new LogEntry();
+			entryList.add(log);
+			PathsUtil.parseLog(log,doc, i);
+			
+			list = doc.getElementsByTagName("paths").item(i).getChildNodes();
+			for(int k=1;k<list.getLength();k+=2)
+			{
+				PathsUtil.parsePath(log, list.item(k).getAttributes(), list.item(k).getTextContent().trim());
+			}
+			
+			
+			
+		}
+		return entryList;
+	}
+}

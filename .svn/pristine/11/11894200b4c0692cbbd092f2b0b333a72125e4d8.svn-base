@@ -1,0 +1,25 @@
+package com.chinasoft.model;
+
+public enum Action 
+{
+
+	//修改
+	M(0),
+	
+	//新增
+	A(1),
+	
+	//delete
+	D(2),
+	
+	//未知
+	UNKNOWN(-1);
+	
+	int value = -1;
+	
+	private Action(int i) 
+	{
+		this.value = i;
+	}
+
+}

@@ -1,0 +1,165 @@
+package com.chinasoft;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Model 
+{
+
+	/**
+	 * ------------------------------------------------------------------------
+	 * r6 | yanzhihao | 2017-05-29 13:55:03 +0800 (周一, 29 五月 2017) | 2 lines
+	 *
+	 * DTS:005
+	 * commit:yanzhihao
+	 */
+	
+	private String dtsAll;
+	
+	private String dtsNO;
+	
+	private String commitName;
+	
+	private String commitNameAll;
+	
+	private Head head;
+	
+	public static void main(String[] args) 
+	{
+		List<String> list = new ArrayList<String>();
+		list.add("------------------------------------------------------------------------");
+		list.add(" r6 | yanzhihao | 2017-05-29 13:55:03 +0800 (周一, 29 五月 2017) | 2 lines");
+		list.add("   ");
+		list.add(" DTS:005");
+		list.add(" commit:yanzhihao");
+		
+		Model m = new Model();
+		m.parseModel(list);
+		System.out.println(m.toString());
+	}
+	
+	public void parseModel(List<String> list)
+	{
+		String nBlank = null;
+		int count = 0;
+		for(String tmp : list)
+		{
+			count++;
+			if (null != tmp)
+			{
+				nBlank = tmp.trim();
+				if (Const.NUM_1 < nBlank.length() 
+						&& nBlank.charAt(0) != Const.HYPHEN)
+				{
+					switch(count)
+					{
+					case 4:
+						setDts(nBlank);
+						break;
+					case 5:
+						setCommitName(nBlank);
+						break;
+					case 2:
+						Head head = new Head();
+						setHead(head);
+						head.parserHead(nBlank);
+						break;
+					
+					default:
+						break;
+					}
+				}
+				
+			}
+		}
+	}
+
+	public final String getDts()
+	{
+		return dtsAll;
+	}
+
+	public final void setDts(String dts)
+	{
+		String[] tmp = dts.split(Const.COLON);
+		if (Const.NUM_1 < tmp.length)
+		{
+			dtsNO = tmp[Const.NUM_1];
+		}
+		this.dtsAll = dts;
+	}
+
+	public final String getCommitName()
+	{
+		return commitName;
+	}
+
+	public final void setCommitName(String commitName)
+	{
+		String[] tmp = commitName.split(Const.COLON);
+		if (Const.NUM_1 < tmp.length)
+		{
+			this.commitName = tmp[Const.NUM_1];
+		}
+		this.commitNameAll = commitName;
+	}
+
+	public final Head getHead()
+	{
+		return head;
+	}
+
+	public final void setHead(Head head)
+	{
+		this.head = head;
+	}
+	
+	public final String getDtsAll()
+	{
+		return dtsAll;
+	}
+
+	public final void setDtsAll(String dtsAll)
+	{
+		this.dtsAll = dtsAll;
+	}
+
+	public final String getDtsNO()
+	{
+		return dtsNO;
+	}
+
+	public final void setDtsNO(String dtsNO)
+	{
+		this.dtsNO = dtsNO;
+	}
+
+	public final String getCommitNameAll()
+	{
+		return commitNameAll;
+	}
+
+	public final void setCommitNameAll(String commitNameAll)
+	{
+		this.commitNameAll = commitNameAll;
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append("MODEL[\ndtsAll:")
+		.append(dtsAll)
+		.append("\ndtsNo:")
+		.append(dtsNO)
+		.append("\ncommitName:")
+		.append(commitName)
+		.append("\ncommitNameAll:")
+		.append(commitNameAll)
+		.append(null==head? "\nhead[NULL]" : '\n'+head.toString())
+		.append("]");
+		
+		return buf.toString();
+	}
+	
+}

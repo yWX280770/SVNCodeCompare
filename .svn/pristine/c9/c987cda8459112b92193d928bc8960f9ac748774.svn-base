@@ -1,0 +1,18 @@
+package com.chinasoft.select;
+
+import java.util.List;
+
+public class SelectModel 
+{
+
+	public static void getModelFiles(List<Model> list)
+	{
+		for(Model model : list)
+		{
+			int newSvnNo = model.getHead().getSvnNo();
+			
+			
+		}
+	}
+
+}
