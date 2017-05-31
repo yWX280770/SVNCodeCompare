@@ -43,4 +43,6 @@ public class Const
 	
 	public static final String COL = "\\\\";
 	
+	public static final String STR_ = "\"";
+	
 }

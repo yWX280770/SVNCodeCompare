@@ -69,4 +69,5 @@ public class FilePath
 		return Kind.DIR.value == this.kind.value;
 	}
 
+	
 }

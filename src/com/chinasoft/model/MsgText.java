@@ -2,36 +2,77 @@ package com.chinasoft.model;
 
 /**
  * <msg> 
- * 问题单号：DTS00000001
- * 特性名称：解析字符串\n 
- * 问题影响版本：UXBXX\n 
- * 问题修复版本：UXBXX\n 
- * 修改人：yanzhihao\n 
- * 代码检视人：XXX，XXX
+
+		 *  Defect：DTS00000003
+ 			Defect：完成xml文本解析，对项目框架做了修改
+ 			BaseLine：UXBXX
+ 			FixLine：UXBXX
+ 			author：yanzhihao
+ 			reviewer：XXX，XXX
  * </msg>
  *
  */
 public class MsgText 
 {
-
-	private String dts;
 	
-	private String modifyName;
+	private String defect;
+	
+	private String defect1;
+	
+	private String baseLine;
+	
+	private String fixLine;
+	
+	private String author;
+	
+	private String reviewer;
 
-	public final void setDts(String dts) {
-		this.dts = dts;
+	public String getDefect() {
+		return defect;
 	}
 
-	public final void setModifyName(String modifyName) {
-		this.modifyName = modifyName;
+	public void setDefect(String defect) {
+		this.defect = defect;
 	}
 
-	public final String getDts() {
-		return dts;
+	public String getDefect1() {
+		return defect1;
 	}
 
-	public final String getModifyName() {
-		return modifyName;
+	public void setDefect1(String defect1) {
+		this.defect1 = defect1;
+	}
+
+	public String getBaseLine() {
+		return baseLine;
+	}
+
+	public void setBaseLine(String baseLine) {
+		this.baseLine = baseLine;
+	}
+
+	public String getFixLine() {
+		return fixLine;
+	}
+
+	public void setFixLine(String fixLine) {
+		this.fixLine = fixLine;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getReviewer() {
+		return reviewer;
+	}
+
+	public void setReviewer(String reviewer) {
+		this.reviewer = reviewer;
 	}
 	
 	

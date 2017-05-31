@@ -3,11 +3,12 @@ package com.chinasoft.select;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import com.chinasoft.model.FilePath;
 import com.chinasoft.model.LogEntry;
@@ -16,6 +17,7 @@ import com.chinasoft.props.Const;
 
 public class SelectModel 
 {
+	
 
 	/**
 	 * 筛选并导出文件到本地对应目录
@@ -30,8 +32,9 @@ public class SelectModel
 		}
 		String dir = null;
 		
-		Map<String, ArrayList<ArrayList<String>>> map = new HashMap<String, ArrayList<ArrayList<String>>>();
-		ArrayList<ArrayList<String>> filePath = null;
+//		Map<String, ArrayList<ArrayList<String>>> map = new HashMap<String, ArrayList<ArrayList<String>>>();
+//		ArrayList<ArrayList<String>> filePath = null;
+		ArrayList<String> str = new ArrayList<String>();
 		for (LogEntry log : list)
 		{
 			if (!jude(log,set))
@@ -40,30 +43,109 @@ public class SelectModel
 			}
 			
 			dir = createDir(log);
-//			if (null == map.get(dir))
-//			{
-//				filePath = new ArrayList<ArrayList<String>>();
-//				map.put(dir, filePath);
-//			}
-//			else
-//			{
-//				filePath = map.get(dir);
-//			}
 			
-			filePath = getTotalPath(log, dir);
-			map.put(dir, filePath);
-//			if(2 == tmp.size())
+			getTotalPath(log, dir,str);
+//			filePath = getTotalPath(log, dir);
+//			if(null == map.get(dir))
 //			{
-//				merge(filePath,tmp);
+//				merge(filePath,map.get(dir));
 //			}
-			
+//			
+//			map.put(dir, filePath);
+//			
 		}
 		
-		downLoad(map);
+//		downLoad(map  );
+		downLoad(str);
 
 		
 	}
 	
+	private static void downLoad(ArrayList<String> str) {
+
+		try
+		{
+			for(String s : str)
+			{
+					Runtime.getRuntime().exec(s);
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private static void getTotalPath(LogEntry log, String dir,
+			ArrayList<String> str) {
+		
+
+		StringBuffer buf = new StringBuffer();
+		List<FilePath> file = log.getPath();
+		
+		for(FilePath f : file)
+		{
+			if (f.isFile() )
+			{
+				if(f.isActionAdd())
+				{
+					buf.setLength(0);
+					buf.append(Const.SVN_HEAD)
+					.append(log.getResision())
+					.append(Const.BLANK)
+					.append(Const.STR_)
+					.append(Const.BASE_LINE)
+					.append(f.getPath())
+					.append("@")
+					.append(log.getResision())
+					.append(Const.STR_)
+					.append(Const.BLANK)
+					.append(dir)
+					.append(Const.COL)
+					.append(Const.NEW);
+					str.add(buf.toString());
+					
+				}
+				else if(f.isActionModify() || f.isActionDel())
+				{
+					buf.setLength(0);
+					buf.append(Const.SVN_HEAD)
+					.append(log.getResision())
+					.append(Const.BLANK)
+					.append(Const.STR_)
+					.append(Const.BASE_LINE)
+					.append(f.getPath())
+					.append("@")
+					.append(log.getResision())
+					.append(Const.STR_)
+					.append(Const.BLANK)
+					.append(dir)
+					.append(Const.COL)
+					.append(Const.NEW);
+					str.add(buf.toString());
+					
+					buf.setLength(0);
+					buf.append(Const.SVN_HEAD)
+					.append(log.getResision()-1)
+					.append(Const.BLANK)
+					.append(Const.STR_)
+					.append(Const.BASE_LINE)
+					.append(f.getPath())
+					.append("@")
+					.append(log.getResision()-1)
+					.append(Const.STR_)
+					.append(Const.BLANK)
+					.append(dir)
+					.append(Const.COL)
+					.append(Const.OLD);
+					str.add(buf.toString());
+					
+				}
+				
+			}
+		}
+	}
+
 	/**
 	 * 判断是否下载当前svn的记录到本地
 	 * @param log
@@ -73,10 +155,10 @@ public class SelectModel
 	private static boolean jude(LogEntry log, Set<String> set) 
 	{
 	
-		String modif = log.getMsg().getModifyName().toLowerCase();
+		String modif = log.getMsg().getAuthor().toLowerCase();
 		for(String tmp : set)
 		{
-			if(modif.matches(tmp))
+			if(modif.contains(tmp))
 			{
 				return true;
 			}
@@ -114,30 +196,33 @@ public class SelectModel
 		
 	}
 	
+	
+	
+	
 	/**
 	 * 如果基础目录一样将待下载文件集合并
 	 * @param filePath
 	 * @param tmp
 	 */
-//	private static void merge(ArrayList<ArrayList<String>> filePath, ArrayList<ArrayList<String>> tmp) 
-//	{
-//		
-//		if( 0 == filePath.size())
-//		{
-//			filePath.addAll(tmp);
-//			return;
-//		}
-//		
-//		if (0 < filePath.size() && filePath.size() == tmp.size())
-//		{
-//			for(int i=0;i<filePath.size();i++)
-//			{
-//				filePath.get(i).addAll(tmp.get(i));
-//			}
-//		}
-//		
-//		return;
-//	}
+	private static void merge(ArrayList<ArrayList<String>> filePath, ArrayList<ArrayList<String>> tmp) 
+	{
+		
+		if( 0 == filePath.size())
+		{
+			filePath.addAll(tmp);
+			return;
+		}
+		
+		if (0 < filePath.size() && filePath.size() == tmp.size())
+		{
+			for(int i=0;i<filePath.size();i++)
+			{
+				filePath.get(i).addAll(tmp.get(i));
+			}
+		}
+		
+		return;
+	}
 
 	/**
 	 * 创建待下载文件的根目录，并创建本地文件
@@ -150,11 +235,9 @@ public class SelectModel
 		//时间秒数_提交人_单号
 		StringBuffer buf = new StringBuffer();
 		buf.append(Const.BASE_DIR)
-		.append(System.currentTimeMillis()/1000)
+		.append(log.getMsg().getAuthor())
 		.append(Const.UNDERLINE)
-		.append(log.getMsg().getModifyName())
-		.append(Const.UNDERLINE)
-		.append(log.getMsg().getDts());
+		.append(log.getMsg().getDefect1());
 		String dir =  buf.toString();
 		
 		int col = dir.length();
@@ -203,10 +286,12 @@ public class SelectModel
 					buf.append(Const.SVN_HEAD)
 					.append(log.getResision())
 					.append(Const.BLANK)
+					.append(Const.STR_)
 					.append(Const.BASE_LINE)
 					.append(f.getPath())
 					.append("@")
 					.append(log.getResision())
+					.append(Const.STR_)
 					.append(Const.BLANK)
 					.append(dir)
 					.append(Const.COL)
@@ -220,10 +305,12 @@ public class SelectModel
 					buf.append(Const.SVN_HEAD)
 					.append(log.getResision())
 					.append(Const.BLANK)
+					.append(Const.STR_)
 					.append(Const.BASE_LINE)
 					.append(f.getPath())
 					.append("@")
 					.append(log.getResision())
+					.append(Const.STR_)
 					.append(Const.BLANK)
 					.append(dir)
 					.append(Const.COL)
@@ -234,10 +321,12 @@ public class SelectModel
 					buf.append(Const.SVN_HEAD)
 					.append(log.getResision()-1)
 					.append(Const.BLANK)
+					.append(Const.STR_)
 					.append(Const.BASE_LINE)
 					.append(f.getPath())
 					.append("@")
 					.append(log.getResision()-1)
+					.append(Const.STR_)
 					.append(Const.BLANK)
 					.append(dir)
 					.append(Const.COL)
@@ -245,16 +334,43 @@ public class SelectModel
 					old.add(buf.toString());
 					
 				}
-				else if (f.isActionDel())
-				{
-					
-				}
+				
 			}
 		}
 		return obj;
 	}
 
 	
-	
+	class DownLoad implements Runnable
+	{
+		
+		Map<String, ArrayList<ArrayList<String>>> map = null;
+		
+		public DownLoad(Map<String, ArrayList<ArrayList<String>>> map) 
+		{
+			this.map = map;
+		}
+		
+		@Override
+		public void run() 
+		{
+			if(null != map)
+			{
+				ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()+1);
+//				for(Entry<String, ArrayList<ArrayList<String>>> list : map.entrySet())
+//				{
+//					ArrayList<ArrayList<String>> li = list.getValue();
+//					for(ArrayList<String> str : li)
+//					{
+//						for(String s : str)
+//						{
+//							executor.execute(s);
+//						}
+//					}
+//				}
+			}
+			
+		}
+	}
 	
 }
